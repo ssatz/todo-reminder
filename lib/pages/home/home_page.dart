@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _rubberAnimationController = RubberAnimationController(
       dismissable: false,
       lowerBoundValue: AnimationControllerValue(percentage: 0),
-      upperBoundValue: AnimationControllerValue(pixel: 400),
+      upperBoundValue: AnimationControllerValue(percentage: 0.8),
       duration: Duration(milliseconds: 200),
       vsync: this,
     );
@@ -134,13 +134,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     alignment: Alignment.topCenter,
                     child: CustomPaint(
                       painter: HeaderBackground(),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          HeaderText(),
-                          FrostedGlass(),
-                        ],
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            HeaderText(),
+                            FrostedGlass(),
+                          ],
+                        ),
                       ),
                     )),
                 FractionallySizedBox(
@@ -182,31 +184,36 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _showBottomSheet(context) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.white, blurRadius: 5)],
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.elliptical(100, 50),
-              topRight: Radius.elliptical(100, 50))),
-      padding: EdgeInsets.all(30),
-      child: Stack(
-        children: <Widget>[
-          Wrap(
-            children: <Widget>[
-              Center(child: Text('Add a new task')),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Task *',
+    return GestureDetector(
+      onVerticalDragDown: (details) {},
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [BoxShadow(color: Colors.white, blurRadius: 5)],
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.elliptical(100, 50),
+                topRight: Radius.elliptical(100, 50))),
+        padding: EdgeInsets.all(30),
+        child: Stack(
+          children: <Widget>[
+            Wrap(
+              children: <Widget>[
+                Center(child: Text('Add a new task')),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Task *',
+                  ),
+                  onSaved: (String value) {},
+                  validator: (String value) {
+                    return value.contains('@')
+                        ? 'Do not use the @ char.'
+                        : null;
+                  },
                 ),
-                onSaved: (String value) {},
-                validator: (String value) {
-                  return value.contains('@') ? 'Do not use the @ char.' : null;
-                },
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
