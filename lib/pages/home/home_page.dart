@@ -196,19 +196,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         padding: EdgeInsets.all(30),
         child: Stack(
           children: <Widget>[
-            Wrap(
+            Column(
               children: <Widget>[
-                Center(child: Text('Add a new task')),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Task *',
+                Expanded(child: Center(child: Text('Add a new task'))),
+                Expanded(
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Task *',
+                    ),
+                    onSaved: (String value) {},
+                    validator: (String value) {
+                      return value.contains('@')
+                          ? 'Do not use the @ char.'
+                          : null;
+                    },
                   ),
-                  onSaved: (String value) {},
-                  validator: (String value) {
-                    return value.contains('@')
-                        ? 'Do not use the @ char.'
-                        : null;
-                  },
                 ),
               ],
             ),

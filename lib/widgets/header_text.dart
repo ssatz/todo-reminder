@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class HeaderText extends StatefulWidget {
   @override
@@ -23,11 +25,22 @@ class _HeaderTextState extends State<HeaderText> {
         children: <Widget>[
           Expanded(
             child: ListTile(
-              title: Text('Hello Damn'),
-              subtitle: Text('You have 9 task today'),
+              title: Text(
+                'Hello Damn',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              subtitle: Text(
+                'You have 9 task today',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
           PopupMenuButton<Choice>(
+            icon: Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
             onSelected: _select,
             itemBuilder: (BuildContext context) {
               return choices.skip(2).map((Choice choice) {
