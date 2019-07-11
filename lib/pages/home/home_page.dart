@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'dart:math' as math;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rubber/rubber.dart';
+import 'package:todo_reminder/widgets/ensure_visible_node.dart';
 import 'package:todo_reminder/widgets/fab_bottom_bar.dart';
 import 'package:todo_reminder/widgets/frosted_glass.dart';
 import 'package:todo_reminder/widgets/header_background.dart';
@@ -14,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  FocusNode _focusNodeFirstName = FocusNode();
   bool isBottomNavigationVisible = true;
   double heightFactor = 0.35;
   RubberAnimationController _rubberAnimationController;
@@ -74,6 +77,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return SafeArea(
       child: OrientationBuilder(builder: (context, orientation) {
         heightFactor = orientation == Orientation.portrait ? 0.3 : 0.55;
+        _rubberAnimationController.upperBoundValue.percentage =
+            orientation == Orientation.portrait ? 0.8 : 1.1;
         return Scaffold(
           bottomNavigationBar: !isBottomNavigationVisible
               ? SizedBox()
@@ -125,39 +130,38 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             elevation: 3.0,
           ),
           body: RubberBottomSheet(
-            animationController: _rubberAnimationController,
-            lowerLayer: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                FractionallySizedBox(
-                    heightFactor: heightFactor,
-                    alignment: Alignment.topCenter,
-                    child: CustomPaint(
-                      painter: HeaderBackground(),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            HeaderText(),
-                            FrostedGlass(),
-                          ],
+              animationController: _rubberAnimationController,
+              lowerLayer: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  FractionallySizedBox(
+                      heightFactor: heightFactor,
+                      alignment: Alignment.topCenter,
+                      child: CustomPaint(
+                        painter: HeaderBackground(),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              HeaderText(),
+                              FrostedGlass(),
+                            ],
+                          ),
                         ),
+                      )),
+                  FractionallySizedBox(
+                    heightFactor: 1 - heightFactor,
+                    alignment: Alignment.bottomCenter,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: _buildTask().toList(),
                       ),
-                    )),
-                FractionallySizedBox(
-                  heightFactor: 1 - heightFactor,
-                  alignment: Alignment.bottomCenter,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: _buildTask().toList(),
                     ),
                   ),
-                ),
-              ],
-            ),
-            upperLayer: _showBottomSheet(context),
-          ),
+                ],
+              ),
+              upperLayer: _showBottomSheet(context)),
         );
       }),
     );
@@ -194,25 +198,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 topLeft: Radius.elliptical(100, 50),
                 topRight: Radius.elliptical(100, 50))),
         padding: EdgeInsets.all(30),
-        child: Stack(
+        child: ListView(
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                Expanded(child: Center(child: Text('Add a new task'))),
-                Expanded(
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Task *',
-                    ),
-                    onSaved: (String value) {},
-                    validator: (String value) {
-                      return value.contains('@')
-                          ? 'Do not use the @ char.'
-                          : null;
-                    },
-                  ),
+            Center(child: Text('Add a new task')),
+            EnsureVisibleWhenFocused(
+              focusNode: _focusNodeFirstName,
+              child: CupertinoTextField(
+                padding: EdgeInsets.all(10),
+                cursorColor: Colors.white,
+                style: TextStyle(color: Colors.white),
+                clearButtonMode: OverlayVisibilityMode.always,
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey,
+                  borderRadius: BorderRadius.all(Radius.circular(6)),
                 ),
-              ],
+              ),
             ),
           ],
         ),

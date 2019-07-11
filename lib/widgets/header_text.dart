@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:todo_reminder/model/choice.dart';
+import 'package:todo_reminder/pages/tag/tag_category.dart';
 
 class HeaderText extends StatefulWidget {
   @override
@@ -8,13 +10,17 @@ class HeaderText extends StatefulWidget {
 }
 
 class _HeaderTextState extends State<HeaderText> {
-  Choice _selectedChoice = choices[0];
+  List<Choice> choices = <Choice>[
+    Choice(title: 'Add Tag', icon: Icons.tag_faces, widget: TagCategory()),
+  ];
 
   void _select(Choice choice) {
-    // Causes the app to rebuild with the new _selectedChoice.
-    setState(() {
-      _selectedChoice = choice;
-    });
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute<bool>(
+        fullscreenDialog: true,
+        builder: (BuildContext context) => choice.widget,
+      ),
+    );
   }
 
   @override
@@ -43,7 +49,7 @@ class _HeaderTextState extends State<HeaderText> {
             ),
             onSelected: _select,
             itemBuilder: (BuildContext context) {
-              return choices.skip(2).map((Choice choice) {
+              return choices.map((Choice choice) {
                 return PopupMenuItem<Choice>(
                   value: choice,
                   child: Text(choice.title),
@@ -55,20 +61,4 @@ class _HeaderTextState extends State<HeaderText> {
       ),
     );
   }
-}
-
-const List<Choice> choices = const <Choice>[
-  const Choice(title: 'Car', icon: Icons.directions_car),
-  const Choice(title: 'Bicycle', icon: Icons.directions_bike),
-  const Choice(title: 'Boat', icon: Icons.directions_boat),
-  const Choice(title: 'Bus', icon: Icons.directions_bus),
-  const Choice(title: 'Train', icon: Icons.directions_railway),
-  const Choice(title: 'Walk', icon: Icons.directions_walk),
-];
-
-class Choice {
-  const Choice({this.title, this.icon});
-
-  final String title;
-  final IconData icon;
 }
